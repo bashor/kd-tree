@@ -1,6 +1,7 @@
 package ru.spbau.bashorov;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -83,10 +84,12 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
 
             if (searchInLeft) {
                 if (result.size() < k || distance.eval(right.minBounds, point).compareTo(worstDist) < 0) {
+                    result = new ArrayList<T[]>(result);
                     result.addAll(right.getNearestK(point, k));
                 }
             } else {
                 if (result.size() < k || distance.eval(point, left.maxBounds).compareTo(worstDist) < 0) {
+                    result = new ArrayList<T[]>(result);
                     result.addAll(left.getNearestK(point, k));
                 }
             }
