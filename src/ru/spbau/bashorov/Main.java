@@ -32,7 +32,7 @@ public class Main {
     }
 
     private static void makeTree(String path) throws IOException {
-        tree = new KDTree<Float>(loadData(path, Integer.MAX_VALUE, Integer.MAX_VALUE), new CicleDimensionChoicer() ,distanceEvaluator);
+        tree = new KDTree<Float>(loadData(path, Integer.MAX_VALUE, Integer.MAX_VALUE), new CircleDimensionChoicer() ,distanceEvaluator);
     }
 
     private static void saveIndex(String path) throws IOException {
