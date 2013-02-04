@@ -10,10 +10,12 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
     private final KDNode root;
     private final DimensionChoicer dimensionChoicer;
     private final BinaryOperation<T[], T> distance;
+    private final BinaryOperation<T, T> simpleDistance;
 
-    public KDTree(final List<T[]> data, DimensionChoicer dimensionChoicer, BinaryOperation<T[], T> distance) {
+    public KDTree(final List<T[]> data, DimensionChoicer dimensionChoicer, BinaryOperation<T[], T> distance, BinaryOperation<T, T> simpleDistance) {
         this.dimensionChoicer = dimensionChoicer;
         this.distance = distance;
+        this.simpleDistance = simpleDistance;
         root = new KDNode(data);
     }
 
@@ -83,12 +85,12 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
             T worstDist = distance.eval(result.get(result.size() - 1), point);
 
             if (searchInLeft) {
-                if (result.size() < k || distance.eval(right.minBounds, point).compareTo(worstDist) < 0) {
+                if (result.size() < k || simpleDistance.eval(right.minBounds[dimension], point[dimension]).compareTo(worstDist) < 0) {
                     result = new ArrayList<T[]>(result);
                     result.addAll(right.getNearestK(point, k));
                 }
             } else {
-                if (result.size() < k || distance.eval(point, left.maxBounds).compareTo(worstDist) < 0) {
+                if (result.size() < k || simpleDistance.eval(point[dimension], left.maxBounds[dimension]).compareTo(worstDist) < 0) {
                     result = new ArrayList<T[]>(result);
                     result.addAll(left.getNearestK(point, k));
                 }
