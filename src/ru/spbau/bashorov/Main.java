@@ -1,14 +1,15 @@
 package ru.spbau.bashorov;
 
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Main {
     private static KDTree<Float> tree;
     private static Random random = new Random();
+    private static SimpleDistanceEvaluator simpleDistance = new SimpleDistanceEvaluator();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
@@ -38,7 +39,7 @@ public class Main {
     private static void makeTree(String path) throws IOException {
         final List<Float[]> data = loadData(path, Integer.MAX_VALUE, Integer.MAX_VALUE);
         final int maxDim = data.get(0).length;
-        tree = new KDTree<Float>(data, new CircleDimensionChoicer(maxDim) , new DistanceEvaluator(maxDim));
+        tree = new KDTree<Float>(data, new CircleDimensionChoicer(maxDim) , new DistanceEvaluator(maxDim), simpleDistance);
     }
 
     private static void saveIndex(String path) throws IOException {
@@ -67,10 +68,11 @@ public class Main {
     private static void benchmark(String text, List<Float[]> data, DimensionChoicer choicer, int repeatCount) {
         for (int d = 10; d <= 100; d += 10) {
             KDTree tree = null;
+            gc();
             long start = System.currentTimeMillis();
             for (int i = 0; i < repeatCount; ++i) {
                 choicer.reset(d);
-                tree = new KDTree<Float>(data, choicer, new DistanceEvaluator(d));
+                tree = new KDTree<Float>(data, choicer, new DistanceEvaluator(d), simpleDistance);
             }
             long stop = System.currentTimeMillis();
 
@@ -96,10 +98,11 @@ public class Main {
         for (int n = startN; n <= 10 * startN && n < data.size(); n += startN) {
             List<Float[]> curData = data.subList(0, n);
             KDTree tree = null;
+            gc();
             long start = System.currentTimeMillis();
             for (int i = 0; i < repeatCount; ++i) {
                 choicer.reset(D);
-                tree = new KDTree<Float>(curData, choicer, distance);
+                tree = new KDTree<Float>(curData, choicer, distance, simpleDistance);
             }
             long stop = System.currentTimeMillis();
 
@@ -114,7 +117,7 @@ public class Main {
 
             double Tsearch = ((double)(stop - start)) / repeatCount;
 
-            System.out.printf("%s n\t%d\t%f\t%f\n", text, n, Tmake, Tsearch);
+            System.out.printf("%s N\t%d\t%f\t%f\n", text, n, Tmake, Tsearch);
         }
         System.out.println("===");
     }
@@ -142,5 +145,14 @@ public class Main {
         System.out.println("\n====");
 
         return data;
+    }
+
+    private static void gc() {
+        Object obj = new Object();
+        WeakReference ref = new WeakReference<Object>(obj);
+        obj = null;
+        while(ref.get() != null) {
+            System.gc();
+        }
     }
 }
