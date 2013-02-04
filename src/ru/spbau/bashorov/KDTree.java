@@ -41,7 +41,7 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
 
             if (!data.isEmpty()) {
                 minBounds = data.get(0);
-                maxBounds = data.get(data.size());
+                maxBounds = data.get(data.size() - 1);
             }
 
             if (data.isEmpty() || data.size() <= MIN_COUNT) {
