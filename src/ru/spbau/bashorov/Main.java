@@ -95,7 +95,7 @@ public class Main {
         final int startN = 100000;
         final int D = data.get(0).length;
         DistanceEvaluator distance = new DistanceEvaluator(D);
-        for (int n = startN; n <= 10 * startN && n < data.size(); n += startN) {
+        for (int n = startN; n <= 10 * startN && n <= data.size(); n += startN) {
             List<Float[]> curData = data.subList(0, n);
             KDTree tree = null;
             gc();
@@ -148,11 +148,10 @@ public class Main {
     }
 
     private static void gc() {
-        Object obj = new Object();
-        WeakReference ref = new WeakReference<Object>(obj);
-        obj = null;
-        while(ref.get() != null) {
+//        Object obj = new Object();
+//        WeakReference ref = new WeakReference<Object>(obj);
+//        obj = null;
+//        while(ref.get() != null)
             System.gc();
-        }
     }
 }
