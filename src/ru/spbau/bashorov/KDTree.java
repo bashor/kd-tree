@@ -30,8 +30,6 @@ class KDTree<T extends Comparable<T>> implements Serializable {
         private final KDNode right;
         private final int dimension;
         private final T middle;
-//        private T[] minBounds;
-//        private T[] maxBounds;
 
         KDNode(List<T[]> data) {
             dimension = dimensionChoicer.choice(data);
@@ -41,11 +39,6 @@ class KDTree<T extends Comparable<T>> implements Serializable {
                     return l[dimension].compareTo(r[dimension]);
                 }
             });
-
-//            if (!data.isEmpty()) {
-//                minBounds = data.get(0);
-//                maxBounds = data.get(data.size() - 1);
-//            }
 
             if (data.size() <= MIN_COUNT) {
                 this.data = data;
