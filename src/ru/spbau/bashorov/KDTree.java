@@ -81,20 +81,22 @@ class KDTree<T extends Comparable<T>> implements Serializable {
                 return data.subList(0, Math.min(k, data.size()));
             }
 
-            boolean searchInLeft = point[dimension].compareTo(middle) < 0;
-            List<T[]> result = searchInLeft ? left.getNearestK(point, k) : right.getNearestK(point, k);
+            KDNode firstSearch = null;
+            KDNode secondSearch = null;
+            if (point[dimension].compareTo(middle) < 0) {
+                firstSearch = left;
+                secondSearch = right;
+            } else {
+                firstSearch = right;
+                secondSearch = left;
+            }
+
+            List<T[]> result = firstSearch.getNearestK(point, k);
             T worstDist = distance.eval(result.get(result.size() - 1), point);
 
-            if (searchInLeft) {
-                if (result.size() < k || simpleDistance.eval(middle, point[dimension]).compareTo(worstDist) < 0) {
-                    result = new ArrayList<T[]>(result);
-                    result.addAll(right.getNearestK(point, k));
-                }
-            } else {
-                if (result.size() < k || simpleDistance.eval(point[dimension], middle).compareTo(worstDist) < 0) {
-                    result = new ArrayList<T[]>(result);
-                    result.addAll(left.getNearestK(point, k));
-                }
+            if (result.size() < k || simpleDistance.eval(middle, point[dimension]).compareTo(worstDist) < 0) {
+                result = new ArrayList<T[]>(result);
+                result.addAll(secondSearch.getNearestK(point, k));
             }
 
             Collections.sort(result, comparator);
