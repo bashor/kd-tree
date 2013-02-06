@@ -7,8 +7,8 @@ import java.util.Random;
 
 public class Main {
     private static KDTree<Float> tree;
-    private static Random random = new Random();
-    private static SimpleDistanceEvaluator simpleDistance = new SimpleDistanceEvaluator();
+    private static final Random random = new Random();
+    private static final SimpleDistanceEvaluator simpleDistance = new SimpleDistanceEvaluator();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 

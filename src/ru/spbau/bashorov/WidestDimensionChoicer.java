@@ -22,9 +22,9 @@ public class WidestDimensionChoicer implements DimensionChoicer<Float> {
         for (int d = 0; d < maxDimension; ++d) {
             Float min = Float.MAX_VALUE;
             Float max = Float.MIN_VALUE;
-            for (int i = 0; i < data.size(); ++i) {
-                min = Math.min(min, data.get(i)[d]);
-                max = Math.max(max, data.get(i)[d]);
+            for (Float[] point : data) {
+                min = Math.min(min, point[d]);
+                max = Math.max(max, point[d]);
             }
             if (max - min > maxWideness) {
                 widestDimension = d;
