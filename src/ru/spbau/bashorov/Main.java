@@ -13,15 +13,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-        doBenchmark("/home/zalim/au/data_mining/3/MultidimensionalData4AU.txt");
-
-//        for (int i = 0; i < args.length; i += 2) {
-//            if (!args[i].equals("exit")) {
-//                if (i < args.length - 1) {
-//                    doCommand(args[i], args[i+1]);
-//                }
-//            }
-//        }
+//        doBenchmark("/home/zalim/au/data_mining/3/MultidimensionalData4AU.txt");
+        for (int i = 0; i < args.length; i += 2) {
+            if (!args[i].equals("exit")) {
+                if (i < args.length - 1) {
+                    doCommand(args[i], args[i+1]);
+                }
+            }
+        }
     }
 
     private static void doCommand(String command, String arg) throws IOException, ClassNotFoundException {
@@ -43,15 +42,15 @@ public class Main {
     }
 
     private static void saveIndex(String path) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
-        oos.writeObject(tree);
-        oos.close();
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
+        out.writeObject(tree);
+        out.close();
 
     }
 
     private static void loadIndex(String path) throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-        tree = (KDTree<Float>) ois.readObject();
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+        tree = (KDTree<Float>) in.readObject();
     }
 
     private static void doBenchmark(String path) throws IOException {
@@ -67,25 +66,29 @@ public class Main {
 
     private static void benchmark(String text, List<Float[]> data, DimensionChoicer choicer, int repeatCount) {
         for (int d = 10; d <= 100; d += 10) {
-            KDTree tree = null;
             gc();
-            long start = System.currentTimeMillis();
+
+            double Tmake = 0;
+            double Tsearch = 0;
+
             for (int i = 0; i < repeatCount; ++i) {
                 choicer.reset(d);
-                tree = new KDTree<Float>(data, choicer, new DistanceEvaluator(d), simpleDistance);
-            }
-            long stop = System.currentTimeMillis();
+                long start = System.currentTimeMillis();
+                KDTree tree = new KDTree<Float>(data, choicer, new DistanceEvaluator(d), simpleDistance);
+                long stop = System.currentTimeMillis();
 
-            double Tmake = ((double)(stop - start)) / repeatCount;
+                Tmake += stop - start;
 
-            start = System.currentTimeMillis();
-            for (int i = 0; i < repeatCount; ++i) {
                 Float[] point = data.get(random.nextInt(data.size()));
+                start = System.currentTimeMillis();
                 tree.getNearestK(point, 10);
-            }
-            stop = System.currentTimeMillis();
+                stop = System.currentTimeMillis();
 
-            double Tsearch = ((double)(stop - start)) / repeatCount;
+                Tsearch += stop - start;
+            }
+
+            Tmake /= repeatCount;
+            Tsearch /= repeatCount;
 
             System.out.printf("%s D\t%d\t%f\t%f\n", text, d, Tmake, Tsearch);
         }
@@ -97,25 +100,29 @@ public class Main {
         DistanceEvaluator distance = new DistanceEvaluator(D);
         for (int n = startN; n <= 10 * startN && n <= data.size(); n += startN) {
             List<Float[]> curData = data.subList(0, n);
-            KDTree tree = null;
             gc();
-            long start = System.currentTimeMillis();
+
+            double Tmake = 0;
+            double Tsearch = 0;
+
             for (int i = 0; i < repeatCount; ++i) {
                 choicer.reset(D);
-                tree = new KDTree<Float>(curData, choicer, distance, simpleDistance);
-            }
-            long stop = System.currentTimeMillis();
+                long start = System.currentTimeMillis();
+                KDTree tree = new KDTree<Float>(curData, choicer, distance, simpleDistance);
+                long stop = System.currentTimeMillis();
 
-            double Tmake = ((double)(stop - start)) / repeatCount;
+                Tmake += stop - start;
 
-            start = System.currentTimeMillis();
-            for (int i = 0; i < repeatCount; ++i) {
                 Float[] point = curData.get(random.nextInt(curData.size()));
+                start = System.currentTimeMillis();
                 tree.getNearestK(point, 10);
-            }
-            stop = System.currentTimeMillis();
+                stop = System.currentTimeMillis();
 
-            double Tsearch = ((double)(stop - start)) / repeatCount;
+                Tsearch += stop - start;
+            }
+
+            Tmake /= repeatCount;
+            Tsearch /= repeatCount;
 
             System.out.printf("%s N\t%d\t%f\t%f\n", text, n, Tmake, Tsearch);
         }

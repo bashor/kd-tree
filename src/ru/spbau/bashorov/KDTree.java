@@ -47,7 +47,7 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
                 maxBounds = data.get(data.size() - 1);
             }
 
-            if (data.isEmpty() || data.size() <= MIN_COUNT) {
+            if (data.size() <= MIN_COUNT) {
                 this.data = data;
                 middle = null;
                 left = null;
@@ -76,6 +76,7 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
             };
 
             if (left == null || right == null) {
+                assert(data != null);
                 Collections.sort(data, comparator);
                 return data.subList(0, Math.min(k, data.size()));
             }
@@ -85,12 +86,12 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
             T worstDist = distance.eval(result.get(result.size() - 1), point);
 
             if (searchInLeft) {
-                if (result.size() < k || simpleDistance.eval(right.minBounds[dimension], point[dimension]).compareTo(worstDist) < 0) {
+                if (result.size() < k || simpleDistance.eval(middle, point[dimension]).compareTo(worstDist) < 0) {
                     result = new ArrayList<T[]>(result);
                     result.addAll(right.getNearestK(point, k));
                 }
             } else {
-                if (result.size() < k || simpleDistance.eval(point[dimension], left.maxBounds[dimension]).compareTo(worstDist) < 0) {
+                if (result.size() < k || simpleDistance.eval(point[dimension], middle).compareTo(worstDist) < 0) {
                     result = new ArrayList<T[]>(result);
                     result.addAll(left.getNearestK(point, k));
                 }
@@ -99,25 +100,5 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
             Collections.sort(result, comparator);
             return result.subList(0, Math.min(k, result.size()));
         }
-
-        @Override
-        public String toString() {
-            if (left != null && right != null) {
-                return left.toString() + right.toString();
-            }
-
-            StringBuilder builder = new StringBuilder();
-            for (T[] d : data) {
-                builder.append(d);
-                builder.append("\n");
-            }
-
-            return builder.toString();
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "KDTree {" + root.toString() + '}';
     }
 }
