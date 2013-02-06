@@ -2,7 +2,7 @@ package ru.spbau.bashorov;
 
 import java.util.List;
 
-public class CircleDimensionChoicer<T extends Comparable<T>>  implements DimensionChoicer<T>{
+public class CircleDimensionChoicer<T extends Comparable<T>> implements DimensionChoicer<T> {
     private int dimension = 0;
     private int maxDimension;
 

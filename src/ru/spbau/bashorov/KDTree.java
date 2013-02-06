@@ -76,7 +76,7 @@ public class KDTree<T extends Comparable<T>> implements Serializable {
             };
 
             if (left == null || right == null) {
-                assert(data != null);
+                assert (data != null);
                 Collections.sort(data, comparator);
                 return data.subList(0, Math.min(k, data.size()));
             }

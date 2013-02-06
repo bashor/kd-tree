@@ -1,7 +1,6 @@
 package ru.spbau.bashorov;
 
 import java.io.*;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,7 +16,7 @@ public class Main {
         for (int i = 0; i < args.length; i += 2) {
             if (!args[i].equals("exit")) {
                 if (i < args.length - 1) {
-                    doCommand(args[i], args[i+1]);
+                    doCommand(args[i], args[i + 1]);
                 }
             }
         }
@@ -38,7 +37,7 @@ public class Main {
     private static void makeTree(String path) throws IOException {
         final List<Float[]> data = loadData(path, Integer.MAX_VALUE, Integer.MAX_VALUE);
         final int maxDim = data.get(0).length;
-        tree = new KDTree<Float>(data, new CircleDimensionChoicer(maxDim) , new DistanceEvaluator(maxDim), simpleDistance);
+        tree = new KDTree<Float>(data, new CircleDimensionChoicer(maxDim), new DistanceEvaluator(maxDim), simpleDistance);
     }
 
     private static void saveIndex(String path) throws IOException {
@@ -159,6 +158,6 @@ public class Main {
 //        WeakReference ref = new WeakReference<Object>(obj);
 //        obj = null;
 //        while(ref.get() != null)
-            System.gc();
+        System.gc();
     }
 }

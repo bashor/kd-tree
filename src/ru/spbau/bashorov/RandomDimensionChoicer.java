@@ -3,7 +3,7 @@ package ru.spbau.bashorov;
 import java.util.List;
 import java.util.Random;
 
-public class RandomDimensionChoicer<T extends Comparable<T>>  implements DimensionChoicer<T> {
+public class RandomDimensionChoicer<T extends Comparable<T>> implements DimensionChoicer<T> {
     private final Random random;
     private int maxDimension;
 
